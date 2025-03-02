@@ -22,9 +22,7 @@ namespace SurveyApi.Repository
             {
                 _logger.LogInformation("Fetching question with ID {QuestionId}", questionId);
                 var question = await _db.Questions.Include(q => q.Answers).FirstOrDefaultAsync(q => q.Id == questionId && q.SurveyId == surveyId);
-
-               
-
+                
                 if (question == null)
                 {
                     _logger.LogWarning("Question with ID {QuestionId} not found", questionId);
@@ -43,22 +41,6 @@ namespace SurveyApi.Repository
         {
             try
             {
-                var exists = await _db.Interviews
-                     .Where(i => i.Id == interviewId)
-                     .Select(i => new
-                     {
-                         InterviewExists = true,
-                         AnswerExists = _db.Answers.Any(a => a.Id == answerId && a.QuestionId == questionId)
-                     })
-                     .FirstOrDefaultAsync();
-
-                if (exists == null || !exists.AnswerExists)
-                {
-                    _logger.LogWarning("Invalid input: InterviewId={InterviewId}, QuestionId={QuestionId}, AnswerId={AnswerId} not found in DB",
-                        interviewId, questionId, answerId);
-                    return null; 
-                }
-
                 _logger.LogInformation("Saving answer: InterviewId={InterviewId}, QuestionId={QuestionId}, AnswerId={AnswerId}",
                     interviewId, questionId, answerId);
 
