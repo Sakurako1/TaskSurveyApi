@@ -1,0 +1,38 @@
+
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "P@ssw0rd"
+      POSTGRES_DB: "survey"
+      TZ: "Europe/Moscow" 
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-script:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+  server:
+    build:
+      context: .
+      dockerfile: SurveyApi/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Username=postgres;Password=P@ssw0rd;Database=survey"
+      TZ: "Europe/Moscow"  # Добавление переменной для региона
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+volumes:
+  postgres-data:
+
+networks:
+  app-network:
+    driver: bridge
