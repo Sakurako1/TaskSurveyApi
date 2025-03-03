@@ -20,6 +20,17 @@ namespace SurveyApi.Repository
         {
             try
             {
+                var checkResult = await _db.Questions.Where(q => q.Id == questionId)
+                                        .Join(_db.Answers, q => q.Id, a => a.QuestionId, (q, a) => new { q, a })
+                                        .Join(_db.Interviews, qa => qa.q.SurveyId, i => i.SurveyId, (qa, i) => new { qa, i })
+                                        .Where(x => x.qa.q.Id == questionId && x.qa.a.Id == answerId && x.i.Id == interviewId)
+                                        .AnyAsync();
+
+                if (!checkResult)
+                {
+                    _logger.LogWarning("One or more entities do not exist: QuestionId={QuestionId}, AnswerId={AnswerId}, InterviewId={InterviewId}", questionId, answerId, interviewId);
+                    return null;
+                }
                 _logger.LogInformation("Fetching question with ID {QuestionId}", questionId);
                 var question = await _db.Questions.Include(q => q.Answers).FirstOrDefaultAsync(q => q.Id == questionId && q.SurveyId == surveyId);
                 
