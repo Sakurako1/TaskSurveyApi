@@ -30,6 +30,8 @@ CREATE TABLE "Interviews" (
     CONSTRAINT "FK_Interview_Survey" FOREIGN KEY ("SurveyId") REFERENCES "Surveys"("Id") ON DELETE CASCADE
 );
 
+CREATE INDEX "idx_interviews_surveyId" ON "Interviews" ("SurveyId");
+
 CREATE TABLE "Results" (
     "Id" SERIAL PRIMARY KEY,
     "QuestionId" INT NOT NULL,
