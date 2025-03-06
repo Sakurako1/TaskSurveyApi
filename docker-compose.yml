@@ -25,6 +25,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     depends_on:
       - db
+    command: /usr/local/bin/wait-for-it.sh db:5432 -- dotnet out/SurveyApi.dll
     ports:
       - "8080:8080"
     networks:
