@@ -23,14 +23,10 @@ namespace SurveyApi.Controllers
         }
 
         [HttpPost("interviews/{interviewId}/questions/{questionId}/answers")]
-        public async Task<IActionResult> SaveAnswer([FromRoute] int interviewId, [FromRoute] int questionId, [FromBody] SaveAnswerDto saveAnswerDto)
+        public async Task<IActionResult> SaveAnswer([FromBody] SaveAnswerDto saveAnswerDto)
         {
 
             if (saveAnswerDto == null) return BadRequest("Invalid answer data.");
-
-            saveAnswerDto.InterviewId = interviewId;
-
-            saveAnswerDto.QuestionId = questionId;
 
             var result = _mapper.Map<Result>(saveAnswerDto);
 
